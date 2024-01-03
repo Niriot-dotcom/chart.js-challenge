@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Chart.js Threshold Example</title>
+</head>
+
+<body>
+  <canvas id="myChart" width="400" height="200"></canvas>
+
+  <script>
+    // Sample data and threshold value
+    const data = {
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [{
+        label: 'My Dataset',
+        data: [12, 19, 3, 5, 2],
+        borderColor: 'blue',
+        borderWidth: 2,
+        fill: {
+          value: 2,
+          // target: 'origin',
+          above: 'rgba(255, 99, 132, 0.2)', // Color for the area above the threshold
+          below: 'rgba(50, 250, 55, 0.2)'  // Color for the area below the threshold
+        }
+      }]
+    };
+
+    // Threshold value
+    const threshold = 10;
+
+    // Chart configuration
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 20, // Adjust this based on your data
+            min: 0   // Adjust this based on your data
+          }
+        }
+      }
+    };
+
+    // Create the chart
+    const myChart = new Chart(document.getElementById('myChart'), config);
+
+    // Add horizontal line for the threshold
+    const ctx = myChart.ctx;
+    ctx.beginPath();
+    ctx.moveTo(0, myChart.scales.y.getPixelForValue(threshold));
+    ctx.lineTo(myChart.width, myChart.scales.y.getPixelForValue(threshold));
+    ctx.strokeStyle = 'red'; // Adjust the color of the threshold line
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  </script>
+</body>
+
+</html>

@@ -6,6 +6,8 @@ runme:
 
 # Notes
 
+![Alt text](image.png)
+
 ## solution description step-by-step
 
 1.
