@@ -9,9 +9,22 @@
 
 <body style="font-family: sans-serif;">
   <!--  -->
-  <div style="width: 800px; display: flex;  justify-items: center;">
+  <script>
+    function setTwoNumberDecimal(event) {
+      console.log("here setTwoNumberDecimal");
+      this.value = parseFloat(this.value).toFixed(2);
+    }
+  </script>
+  <div style="
+      width: 800px;
+      display: flex;
+      flex-direction: column;
+      justify-items: center;
+    ">
     <h1>Task 3: Fill the Area Below the Threshold</h1>
     <span>Current threshold: <span id="final-threshold-value"></span></span>
+    <input type="number" min=0 max=10 step=0.01 placeholder="threshold" value="threshold"
+      onchange="setTwoNumberDecimal" />
     <canvas id="t3-fill-the-area"></canvas>
   </div>
 

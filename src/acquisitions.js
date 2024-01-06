@@ -5,26 +5,47 @@ Chart.register(Filler);
 import annotationPlugin from "chartjs-plugin-annotation";
 Chart.register(annotationPlugin);
 
+function getGradient(chart, threshold = 4) {
+  const {
+    ctx,
+    chartArea: { top, bottom, left, right },
+    scales: { x, y },
+  } = chart;
+  const gradiendSegment = ctx.createLinearGradient(0, bottom, 0, top);
+  let border = Math.min(
+    1,
+    (bottom - y.getPixelForValue(threshold)) / (bottom - top)
+  );
+
+  gradiendSegment.addColorStop(0, "red");
+  gradiendSegment.addColorStop(border, "red");
+  gradiendSegment.addColorStop(border, "green");
+  gradiendSegment.addColorStop(1, "green");
+  return gradiendSegment;
+}
+
 (async function () {
+  let threshold = 10;
+
   const chartConfigs = [
     {},
     {},
     {
       type: "line",
       data: {
-        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         datasets: [
           {
             label: "Line Chart",
             data: [1, 2, 4, 5, 9, 4, 3, 2, 4, 10],
-            fill: {
-              value: 4,
-              target: { value: 3 },
-              below: "#e7cace",
+            borderWidth: 0,
+            fill: "start",
+            backgroundColor: (context) => {
+              const chart = context.chart;
+              const { ctx, chartArea } = chart;
+              if (!chartArea) return null;
+              return getGradient(chart);
             },
-            fillColor: "rgba(255, 192, 255)",
-            borderColor: "rgb(75, 192, 192)",
-            tension: 0.1,
           },
         ],
       },
@@ -32,12 +53,11 @@ Chart.register(annotationPlugin);
         scales: {
           y: {
             beginAtZero: true,
-            max: 50, // Adjust this based on your data
+            max: 10, // Adjust this based on your data
             min: 0, // Adjust this based on your data
           },
         },
         onClick: (e) => {
-          let threshold = 10;
           const canvasPosition = getRelativePosition(e, finalChart);
 
           const _ = finalChart.scales.x.getValueForPixel(canvasPosition.x);
