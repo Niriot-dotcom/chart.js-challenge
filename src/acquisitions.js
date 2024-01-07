@@ -5,7 +5,15 @@ Chart.register(Filler);
 import annotationPlugin from "chartjs-plugin-annotation";
 Chart.register(annotationPlugin);
 
-function getGradient(chart, threshold = 4) {
+let threshold = 10;
+let showLine = false;
+const chartBgColor = "#aaaaaa50";
+const chartFillColor = "#ff648550";
+
+const spanThresholdValue = document.getElementById("final-threshold-value");
+const checkboxShowLine = document.getElementById("show-line");
+
+function getGradient(chart) {
   const {
     ctx,
     chartArea: { top, bottom, left, right },
@@ -16,17 +24,21 @@ function getGradient(chart, threshold = 4) {
     1,
     (bottom - y.getPixelForValue(threshold)) / (bottom - top)
   );
+  border = Math.max(0, border);
 
-  gradiendSegment.addColorStop(0, "red");
-  gradiendSegment.addColorStop(border, "red");
-  gradiendSegment.addColorStop(border, "green");
-  gradiendSegment.addColorStop(1, "green");
+  gradiendSegment.addColorStop(0, chartFillColor);
+  gradiendSegment.addColorStop(border, chartFillColor);
+  gradiendSegment.addColorStop(border, chartBgColor);
+  gradiendSegment.addColorStop(1, chartBgColor);
   return gradiendSegment;
 }
 
-(async function () {
-  let threshold = 10;
+function updateLine(chart) {
+  chart.options.plugins.annotation.annotations[0].yMin = threshold;
+  chart.options.plugins.annotation.annotations[0].yMax = threshold;
+}
 
+(async function () {
   const chartConfigs = [
     {},
     {},
@@ -38,8 +50,8 @@ function getGradient(chart, threshold = 4) {
           {
             label: "Line Chart",
             data: [1, 2, 4, 5, 9, 4, 3, 2, 4, 10],
-            borderWidth: 0,
             fill: "start",
+            borderColor: "#ff6485",
             backgroundColor: (context) => {
               const chart = context.chart;
               const { ctx, chartArea } = chart;
@@ -50,42 +62,29 @@ function getGradient(chart, threshold = 4) {
         ],
       },
       options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 10, // Adjust this based on your data
-            min: 0, // Adjust this based on your data
-          },
-        },
         onClick: (e) => {
           const canvasPosition = getRelativePosition(e, finalChart);
-
           const _ = finalChart.scales.x.getValueForPixel(canvasPosition.x);
           const dataY = finalChart.scales.y.getValueForPixel(canvasPosition.y);
-          const spanThresholdValue = document.getElementById(
-            "final-threshold-value"
-          );
           threshold = dataY;
-
-          // update values for text and chart
-          finalChart.options.plugins.annotation.annotations[0].yMin = threshold;
-          finalChart.options.plugins.annotation.annotations[0].yMax = threshold;
-          finalChart.options.plugins.annotation.annotations[0].borderWidth = 2;
+          spanThresholdValue.value = threshold.toFixed(2);
+          updateLine(finalChart);
           finalChart.update();
-
-          spanThresholdValue.textContent = threshold.toFixed(2);
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 10,
+          },
         },
         plugins: {
-          filler: {
-            propagate: false,
-          },
           annotation: {
             annotations: [
               {
                 type: "line",
                 yMin: 10,
                 yMax: 10,
-                borderColor: "rgb(255, 99, 132)",
+                borderColor: "blue",
                 borderWidth: 0,
               },
             ],
@@ -96,8 +95,26 @@ function getGradient(chart, threshold = 4) {
   ];
 
   // TASK 3 CANVAS
-  const finalChart = new Chart(
+  let finalChart = new Chart(
     document.getElementById("t3-fill-the-area"),
     chartConfigs[2]
   );
+
+  spanThresholdValue.addEventListener("change", (e) => {
+    e.target.value = Math.min(10, e.target.valueAsNumber);
+    e.target.value = Math.max(0, e.target.valueAsNumber);
+    e.target.value = parseFloat(e.target.valueAsNumber).toFixed(2);
+    threshold = e.target.valueAsNumber;
+    updateLine(finalChart);
+    finalChart.update();
+  });
+
+  checkboxShowLine.addEventListener("click", (e) => {
+    showLine = e.target.checked;
+    finalChart.options.plugins.annotation.annotations[0].borderWidth = showLine
+      ? 2
+      : 0;
+    updateLine(finalChart);
+    finalChart.update();
+  });
 })();
