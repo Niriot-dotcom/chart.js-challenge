@@ -7,27 +7,35 @@
 
 <body style="font-family: sans-serif;">
   <div style="
-      width: 800px;
-      display: flex;
-      flex-direction: column;
+      width: 80%;
       justify-items: center;
+      padding-left: 30px;
+      margin: 0 auto;
     ">
-    <h1>Task 3: Fill the Area Below the Threshold</h1>
+    <h1 style="font-size: 3vw;">Task 3: Fill the Area Below the Threshold</h1>
 
-    <div style="width: 100%; border-width: 2; border-color: green; height: 100%; min-width: 50%">
-      <span>Current threshold:
-        <input id="final-threshold-value" type="number" min=0 max=10 step=0.01 placeholder="threshold" />
+    <!-- 'threshold' input field -->
+    <div style="width: 100%; height: 100%; min-width: 50%;">
+      <span style="font-size: 1.5vw;">Current threshold:
+        <input id="final-threshold-value"
+          style="max-width: 15vw; min-width: 15vw; width: 12vw; margin-left: 5px; font-size: 1.3vw;" type="number" min=0
+          max=10 step=0.01 placeholder="threshold" />
       </span>
     </div>
-    <div style="width: 100%; border-width: 2; border-color: green; height: 100%; min-width: 50%">
+
+    <!-- 'show line' checkbox -->
+    <div style="width: 100%; height: 100%; min-width: 120%">
       <input id="show-line" type="checkbox" />
-      <span>Show line
-      </span>
+      <span style="font-size: 1.4vw;">Show line</span>
     </div>
-    <canvas id="t3-fill-the-area"></canvas>
+
+    <!-- chart -->
+    <div style="position: relative; height:70vh; width:80vw; display: flex; align-items: center;">
+      <canvas id="t3-fill-the-area"></canvas>
+    </div>
   </div>
 
-  <script type="module" src="acquisitions.js"></script>
+  <script type="module" src="chartsLogic.js"></script>
 </body>
 
 </html>

@@ -62,6 +62,8 @@ function updateLine(chart) {
         ],
       },
       options: {
+        // responsive: true,
+        // maintainAspectRatio: false,
         onClick: (e) => {
           const canvasPosition = getRelativePosition(e, finalChart);
           const _ = finalChart.scales.x.getValueForPixel(canvasPosition.x);
